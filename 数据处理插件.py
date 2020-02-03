@@ -1,3 +1,4 @@
+
 import pandas as pd
 import time
 import datetime
@@ -184,13 +185,16 @@ def get_deliver(sales_file, stock_file, on_the_way=6, mini_security_day=7, secur
     def get_stock_df(stock_file):
         df_stock = read_file(stock_file)
         date = max(df_stock['snapshot-date'])
-        df_stock = df_stock[df_stock['currency'] == 'USD']
+        # df_stock = df_stock[df_stock['currency'] == 'USD']
         df_stock_res = df_stock[['fnsku', 'sku', 'asin', 'sellable-quantity', 'in-bound-quantity']]
         df_stock_res.columns = ['fnsku', 'sku', 'asin', '可售数量', '在途数量']
         sku_unique = df_stock_res['sku'].value_counts()[0]
+        print(sku_unique)
         df_stock_res['库存记录时间'] = dateutil.parser.parse(date.replace('PDT', '').replace('PST', '')).date()
         if sku_unique > 1:
             print('输入表格中sku列有重复，请核实')
+            print('仅支持单个站点操作，请筛选数据后重新尝试')
+            is_wrong()
         try:
             df_stock_res.set_index(keys='sku', inplace=True)
         except Exception as e:
@@ -255,7 +259,7 @@ def get_deliver(sales_file, stock_file, on_the_way=6, mini_security_day=7, secur
         df_last['应发状态'] = df_last['最晚发货时间'].apply(time_cls)
         # df_last['当天补货推荐'] = (security_day - df_last['最晚发货时间']) * df_last['平均日销量'] - df_last['总库存量']
         df_last['制表时间'] = datetime.datetime.now().date()
-        df_last['站点'] = 'US'
+        # df_last['站点'] = 'US'
         # df_last['当天补货推荐'] = df_last['当天补货推荐'].fillna(0)
         for i in ['最晚发货时间', '最小安全库存', '安全库存', '建议补货数量']:
             try:
