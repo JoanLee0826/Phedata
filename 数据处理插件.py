@@ -5,7 +5,7 @@ import datetime
 import os
 import re
 import dateutil  # 识别日期格式
-import chardet
+import chardet  # 文件编码格式判断
 import numpy as np
 
 # import plotly.express as px
@@ -56,7 +56,7 @@ def df_to_excel(df, file_name):
     :return: 将df按照Excel格式保存到指定路径 不返回内容
     """
     writer = pd.ExcelWriter(file_name, engine='xlsxwriter', options={'strings_to_urls': False})
-    df.to_excel(writer)
+    df.to_excel(writer, index=False)
     writer.close()
     return "{}已被保存到{}".format(df, file_name)
 
@@ -96,9 +96,6 @@ def in_all(data_path, fill_name=True):
 
     out_file = out_path + '/合并' + aft + '.xlsx'
     df_to_excel(df=row_df, file_name=out_file)
-    # writer = pd.ExcelWriter(out_file, engine='xlsxwriter', options={'strings_to_urls': False})
-    # row_df.to_excel(writer)
-    # writer.close()
     print("文件合并保存在目录：{}".format(os.path.realpath(out_path)))
 
 
